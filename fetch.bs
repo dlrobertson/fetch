@@ -154,8 +154,8 @@ originally defined in <cite>The Web Origin Concept</cite>. [[ORIGIN]]
 
 <p>At a high level, fetching a resource is a fairly simple operation. A request goes in, a
 response comes out. <!--You can't explain that! -->The details of that operation are
-however quite involved and used to not be written down carefully and differ from one API
-to the next.
+however quite involved. They were previously not written down carefully and differed from
+one API to the next.
 
 <p>Numerous APIs provide the ability to fetch a resource, e.g. HTML's <code>img</code> and
 <code>script</code> element, CSS' <code>cursor</code> and <code>list-style-image</code>,
@@ -195,132 +195,14 @@ lt="authentication entry">authentication entries</a> (for HTTP authentication). 
 
 <hr>
 
-<p>A <dfn>fetch params</dfn> is a <a for=/>struct</a> used as a bookkeeping detail by the
-<a for=/>fetch</a> algorithm. It has the following <a for=struct>items</a>:
-
-<dl>
- <dt><dfn for="fetch params">request</dfn>
- <dd>A <a for=/>request</a>.
-
- <dt><dfn for="fetch params" id=fetch-params-process-request-body>process request body chunk length</dfn>
- (default null)
- <dt><dfn for="fetch params">process request end-of-body</dfn> (default null)
- <dt><dfn for="fetch params">process early hints response</dfn> (default null)
- <dt><dfn for="fetch params">process response</dfn> (default null)
- <dt><dfn for="fetch params">process response end-of-body</dfn> (default null)
- <dt><dfn for="fetch params">process response consume body</dfn> (default null)
- <dd>Null or an algorithm.
-
- <dt><dfn for="fetch params">task destination</dfn> (default null)
- <dd>Null, a <a for=/>global object</a>, or a <a for=/>parallel queue</a>.
-
- <dt><dfn for="fetch params">cross-origin isolated capability</dfn> (default false)
- <dd>A boolean.
-
- <dt><dfn for="fetch params">controller</dfn> (default a new <a for=/>fetch controller</a>)
- <dd>A <a for=/>fetch controller</a>.
-
- <dt><dfn for="fetch params">timing info</dfn>
- <dd>A <a for=/>fetch timing info</a>.
-
- <dt><dfn export for="fetch params">preloaded response candidate</dfn> (default null)
- <dd>Null, "<code>pending</code>", or a <a for=/>response</a>.
-</dl>
-
-<p>A <dfn export>fetch controller</dfn> is a <a for=/>struct</a> used to enable callers of
-<a for=/>fetch</a> to perform certain operations on it after it has started. It has the following
-<a for=struct>items</a>:
-
-<dl>
- <dt><dfn for="fetch controller">state</dfn> (default "<code>ongoing</code>")
- <dd>"<code>ongoing</code>", "<code>terminated</code>", or "<code>aborted</code>"
-</dl>
-
-<p>To <dfn export for="fetch controller">abort</dfn> a <a for=/>fetch controller</a>
-<var>controller</var>, set <var>controller</var>'s <a for="fetch controller">state</a> to
-"<code>aborted</code>".
-
-<p>To <dfn export for="fetch controller">terminate</dfn> a <a for=/>fetch controller</a>
-<var>controller</var>, set <var>controller</var>'s <a for="fetch controller">state</a> to
-"<code>terminated</code>".
-
-<p>A <a for=/>fetch params</a> <var>fetchParams</var> is <dfn for="fetch params">aborted</dfn> if
-its <a for="fetch params">controller</a>'s <a for="fetch controller">state</a> is
-"<code>aborted</code>".
-
-<p>A <a for=/>fetch params</a> <var>fetchParams</var> is <dfn for="fetch params">canceled</dfn> if
-its <a for="fetch params">controller</a>'s <a for="fetch controller">state</a> is
-"<code>aborted</code>" or "<code>terminated</code>".
-
-<p>A <dfn export>fetch timing info</dfn> is a <a for=/>struct</a> used to maintain timing
-information needed by <cite>Resource Timing</cite> and <cite>Navigation Timing</cite>. It has the
-following <a for=struct>items</a>: [[RESOURCE-TIMING]] [[NAVIGATION-TIMING]]
-
-<dl>
- <dt><dfn export for="fetch timing info">start time</dfn> (default 0)
- <dt><dfn export for="fetch timing info">redirect start time</dfn> (default 0)
- <dt><dfn export for="fetch timing info">redirect end time</dfn> (default 0)
- <dt><dfn export for="fetch timing info">post-redirect start time</dfn> (default 0)
- <dt><dfn export for="fetch timing info">final service worker start time</dfn> (default 0)
- <dt><dfn export for="fetch timing info">final network-request start time</dfn> (default 0)
- <dt><dfn export for="fetch timing info">final network-response start time</dfn> (default 0)
- <dt><dfn export for="fetch timing info">end time</dfn> (default 0)
- <dd>A {{DOMHighResTimeStamp}}.
-
- <dt><dfn export for="fetch timing info">encoded body size</dfn> (default 0)
- <dt><dfn export for="fetch timing info">decoded body size</dfn> (default 0)
- <dd>A number.
-
- <dt><dfn export for="fetch timing info">final connection timing info</dfn> (default null)
- <dd>Null or a <a for=/>connection timing info</a>.
-
- <dt><dfn export for="fetch timing info">server-timing headers</dfn> (default « »)
- <dd>A <a for=/>list</a> of strings.
-</dl>
-
-<p>To
-<dfn export lt="create an opaque timing info|creating an opaque timing info">create an opaque timing info</dfn>,
-given a <a for=/>fetch timing info</a> <var>timingInfo</var>, return a new
-<a for=/>fetch timing info</a> whose <a for="fetch timing info">start time</a> and
-<a for="fetch timing info">post-redirect start time</a> are <var>timingInfo</var>'s
-<a for="fetch timing info">start time</a>.
-
-<p>To <dfn>update timing info from stored response</dfn>, given a
-<a for=/>connection timing info</a> <var>timingInfo</var> and a <a for=/>response</a>
-<var>response</var>, perform the following steps:
-
-<ol>
- <li><p>Let <var>storedTimingInfo</var> be <var>response</var>'s <a for=response>timing info</a>.
-
- <li><p>If <var>storedTimingInfo</var> is null, then return.
-
- <li><p>Set <var>timingInfo</var>'s <a for="fetch timing info">encoded body size</a> to
- <var>storedTimingInfo</var>'s <a for="fetch timing info">encoded body size</a>.
-
- <li><p>Set <var>timingInfo</var>'s <a for="fetch timing info">decoded body size</a> to
- <var>storedTimingInfo</var>'s <a for="fetch timing info">decoded body size</a>.
-</ol>
-
-<p>To <dfn>queue a fetch task</dfn>, given an algorithm <var>algorithm</var>, a
-<a for=/>global object</a> or a <a for=/>parallel queue</a> <var>taskDestination</var>, run these
-steps:
-
-<ol>
- <li><p>If <var>taskDestination</var> is a <a for=/>parallel queue</a>, then
- <a lt="enqueue steps" for="parallel queue">enqueue</a> <var>algorithm</var> to
- <var>taskDestination</var>.
-
- <li><p>Otherwise, <a>queue a global task</a> on the <a>networking task source</a> with
- <var>taskDestination</var> and <var>algorithm</var>.
-</ol>
-
-<hr>
-
 <p>To <dfn>serialize an integer</dfn>, represent it as a string of the shortest possible decimal
 number.
 
 <p class=XXX>This will be replaced by a more descriptive algorithm in Infra. See
 <a href="https://github.com/whatwg/infra/issues/201">infra/201</a>.
+
+<hr>
+
 
 
 <h3 id=url>URL</h3>
@@ -3799,6 +3681,8 @@ run these steps:
 
 <h2 id=fetching>Fetching</h2>
 
+<h3 id=fetching-algorithm>Fetching algorithm</h3>
+
 <p class=note>The algorithm below defines <a lt=fetch for=/>fetching</a>. In broad strokes, it takes
 a <a for=/>request</a> and one or more algorithms to run at various points during the operation. A
 <a for=/>response</a> is passed to the last two algorithms listed below. The first two algorithms
@@ -4015,7 +3899,7 @@ the request.
 </ol>
 
 
-<h3 id=main-fetch>Main fetch</h3>
+<h4 id=main-fetch>Main fetch</h4>
 
 <p>To <dfn id=concept-main-fetch>main fetch</dfn>, given a <a for=/>fetch params</a>
 <var>fetchParams</var> and an optional boolean <var>recursive</var> (default false), run these
@@ -4473,7 +4357,7 @@ steps:
 </ol>
 
 
-<h3 id=scheme-fetch oldids=basic-fetch>Scheme fetch</h3>
+<h4 id=scheme-fetch oldids=basic-fetch>Scheme fetch</h4>
 
 <p>To <dfn id=concept-scheme-fetch oldids=concept-basic-fetch>scheme fetch</dfn>, given a
 <a for=/>fetch params</a> <var>fetchParams</var>: let <var>request</var> be <var>fetchParams</var>'s
@@ -4570,7 +4454,7 @@ steps:
 </dl>
 
 
-<h3 id=http-fetch>HTTP fetch</h3>
+<h4 id=http-fetch>HTTP fetch</h4>
 
 <p>To <dfn export id=concept-http-fetch>HTTP fetch</dfn>, given a <a for=/>fetch params</a>
 <var>fetchParams</var> and an optional boolean <var>makeCORSPreflight</var> (default false), run
@@ -4792,7 +4676,7 @@ these steps:
 </ol>
 
 
-<h3 id=http-redirect-fetch>HTTP-redirect fetch</h3>
+<h4 id=http-redirect-fetch>HTTP-redirect fetch</h4>
 
 <p>To <dfn export id=concept-http-redirect-fetch>HTTP-redirect fetch</dfn>, given a
 <a for=/>fetch params</a> <var>fetchParams</var> and a <a for=/>response</a> <var>response</var>,
@@ -4891,7 +4775,7 @@ run these steps:
 </ol>
 
 
-<h3 id=navigate-redirect-fetch>Navigate-redirect fetch</h3>
+<h4 id=navigate-redirect-fetch>Navigate-redirect fetch</h4>
 
 <p class=note>This algorithm is used by <cite>HTML</cite>'s navigate algorithm. It is expected to be
 invoked while <a>in parallel</a>. [[!HTML]]
@@ -4911,7 +4795,7 @@ steps. They return a <a for=/>response</a>.
 </ol>
 
 
-<h3 id=http-network-or-cache-fetch>HTTP-network-or-cache fetch</h3>
+<h4 id=http-network-or-cache-fetch>HTTP-network-or-cache fetch</h4>
 
 <p>To <dfn id=concept-http-network-or-cache-fetch>HTTP-network-or-cache fetch</dfn>, given a
 <a for=/>fetch params</a> <var>fetchParams</var>, an optional boolean
@@ -5445,7 +5329,7 @@ steps. They return a <a for=/>response</a>.
 </ol>
 
 
-<h3 id=http-network-fetch>HTTP-network fetch</h3>
+<h4 id=http-network-fetch>HTTP-network fetch</h4>
 
 <p>To <dfn id=concept-http-network-fetch>HTTP-network fetch</dfn>, given a <a for=/>fetch params</a>
 <var>fetchParams</var>, an optional boolean <var>includeCredentials</var> (default false), and an
@@ -5818,7 +5702,7 @@ optional boolean <var>forceNewConnection</var> (default false), run these steps:
 </ol>
 
 
-<h3 id=cors-preflight-fetch>CORS-preflight fetch</h3>
+<h4 id=cors-preflight-fetch>CORS-preflight fetch</h4>
 
 <p class="note no-backref">This is effectively the user agent implementation of the check to see if
 the <a>CORS protocol</a> is understood. The so-called <a>CORS-preflight request</a>. If
@@ -5956,7 +5840,7 @@ number of these <a lt="CORS-preflight fetch">fetches</a>.
 </ol>
 
 
-<h3 id=cors-preflight-cache>CORS-preflight cache</h3>
+<h4 id=cors-preflight-cache>CORS-preflight cache</h4>
 
 <p>A user agent has an associated <a>CORS-preflight cache</a>. A
 <dfn id=concept-cache>CORS-preflight cache</dfn> is a <a for=/>list</a> of <a>cache entries</a>.
@@ -6058,7 +5942,7 @@ agent's <a>CORS-preflight cache</a> for which there is a <a>cache entry match</a
 <p>is true.
 
 
-<h3 id=cors-check>CORS check</h3>
+<h4 id=cors-check>CORS check</h4>
 
 <p>To perform a <dfn id=concept-cors-check>CORS check</dfn> for a <var>request</var> and
 <var>response</var>, run these steps:
@@ -6092,7 +5976,7 @@ agent's <a>CORS-preflight cache</a> for which there is a <a>cache entry match</a
 </ol>
 
 
-<h3 id=tao-check>TAO check</h3>
+<h4 id=tao-check>TAO check</h4>
 
 <p>To perform a <dfn id=concept-tao-check>TAO check</dfn> for a <var>request</var> and
 <var>response</var>, run these steps:
@@ -6125,6 +6009,127 @@ agent's <a>CORS-preflight cache</a> for which there is a <a>cache entry match</a
  return success.
 
  <li><p>Return failure.
+</ol>
+
+<h3 id=fetching-misc>Fetching miscellaneous</h3>
+
+<p>A <dfn>fetch params</dfn> is a <a for=/>struct</a> used as a bookkeeping detail by the
+<a for=/>fetch</a> algorithm. It has the following <a for=struct>items</a>:
+
+<dl>
+ <dt><dfn for="fetch params">request</dfn>
+ <dd>A <a for=/>request</a>.
+
+ <dt><dfn for="fetch params" id=fetch-params-process-request-body>process request body chunk length</dfn>
+ (default null)
+ <dt><dfn for="fetch params">process request end-of-body</dfn> (default null)
+ <dt><dfn for="fetch params">process early hints response</dfn> (default null)
+ <dt><dfn for="fetch params">process response</dfn> (default null)
+ <dt><dfn for="fetch params">process response end-of-body</dfn> (default null)
+ <dt><dfn for="fetch params">process response consume body</dfn> (default null)
+ <dd>Null or an algorithm.
+
+ <dt><dfn for="fetch params">task destination</dfn> (default null)
+ <dd>Null, a <a for=/>global object</a>, or a <a for=/>parallel queue</a>.
+
+ <dt><dfn for="fetch params">cross-origin isolated capability</dfn> (default false)
+ <dd>A boolean.
+
+ <dt><dfn for="fetch params">controller</dfn> (default a new <a for=/>fetch controller</a>)
+ <dd>A <a for=/>fetch controller</a>.
+
+ <dt><dfn for="fetch params">timing info</dfn>
+ <dd>A <a for=/>fetch timing info</a>.
+
+ <dt><dfn export for="fetch params">preloaded response candidate</dfn> (default null)
+ <dd>Null, "<code>pending</code>", or a <a for=/>response</a>.
+</dl>
+
+<p>A <dfn export>fetch controller</dfn> is a <a for=/>struct</a> used to enable callers of
+<a for=/>fetch</a> to perform certain operations on it after it has started. It has the following
+<a for=struct>items</a>:
+
+<dl>
+ <dt><dfn for="fetch controller">state</dfn> (default "<code>ongoing</code>")
+ <dd>"<code>ongoing</code>", "<code>terminated</code>", or "<code>aborted</code>"
+</dl>
+
+<p>To <dfn export for="fetch controller">abort</dfn> a <a for=/>fetch controller</a>
+<var>controller</var>, set <var>controller</var>'s <a for="fetch controller">state</a> to
+"<code>aborted</code>".
+
+<p>To <dfn export for="fetch controller">terminate</dfn> a <a for=/>fetch controller</a>
+<var>controller</var>, set <var>controller</var>'s <a for="fetch controller">state</a> to
+"<code>terminated</code>".
+
+<p>A <a for=/>fetch params</a> <var>fetchParams</var> is <dfn for="fetch params">aborted</dfn> if
+its <a for="fetch params">controller</a>'s <a for="fetch controller">state</a> is
+"<code>aborted</code>".
+
+<p>A <a for=/>fetch params</a> <var>fetchParams</var> is <dfn for="fetch params">canceled</dfn> if
+its <a for="fetch params">controller</a>'s <a for="fetch controller">state</a> is
+"<code>aborted</code>" or "<code>terminated</code>".
+
+<p>A <dfn export>fetch timing info</dfn> is a <a for=/>struct</a> used to maintain timing
+information needed by <cite>Resource Timing</cite> and <cite>Navigation Timing</cite>. It has the
+following <a for=struct>items</a>: [[RESOURCE-TIMING]] [[NAVIGATION-TIMING]]
+
+<dl>
+ <dt><dfn export for="fetch timing info">start time</dfn> (default 0)
+ <dt><dfn export for="fetch timing info">redirect start time</dfn> (default 0)
+ <dt><dfn export for="fetch timing info">redirect end time</dfn> (default 0)
+ <dt><dfn export for="fetch timing info">post-redirect start time</dfn> (default 0)
+ <dt><dfn export for="fetch timing info">final service worker start time</dfn> (default 0)
+ <dt><dfn export for="fetch timing info">final network-request start time</dfn> (default 0)
+ <dt><dfn export for="fetch timing info">final network-response start time</dfn> (default 0)
+ <dt><dfn export for="fetch timing info">end time</dfn> (default 0)
+ <dd>A {{DOMHighResTimeStamp}}.
+
+ <dt><dfn export for="fetch timing info">encoded body size</dfn> (default 0)
+ <dt><dfn export for="fetch timing info">decoded body size</dfn> (default 0)
+ <dd>A number.
+
+ <dt><dfn export for="fetch timing info">final connection timing info</dfn> (default null)
+ <dd>Null or a <a for=/>connection timing info</a>.
+
+ <dt><dfn export for="fetch timing info">server-timing headers</dfn> (default « »)
+ <dd>A <a for=/>list</a> of strings.
+</dl>
+
+<p>To
+<dfn export lt="create an opaque timing info|creating an opaque timing info">create an opaque timing info</dfn>,
+given a <a for=/>fetch timing info</a> <var>timingInfo</var>, return a new
+<a for=/>fetch timing info</a> whose <a for="fetch timing info">start time</a> and
+<a for="fetch timing info">post-redirect start time</a> are <var>timingInfo</var>'s
+<a for="fetch timing info">start time</a>.
+
+<p>To <dfn>update timing info from stored response</dfn>, given a
+<a for=/>connection timing info</a> <var>timingInfo</var> and a <a for=/>response</a>
+<var>response</var>, perform the following steps:
+
+<ol>
+ <li><p>Let <var>storedTimingInfo</var> be <var>response</var>'s <a for=response>timing info</a>.
+
+ <li><p>If <var>storedTimingInfo</var> is null, then return.
+
+ <li><p>Set <var>timingInfo</var>'s <a for="fetch timing info">encoded body size</a> to
+ <var>storedTimingInfo</var>'s <a for="fetch timing info">encoded body size</a>.
+
+ <li><p>Set <var>timingInfo</var>'s <a for="fetch timing info">decoded body size</a> to
+ <var>storedTimingInfo</var>'s <a for="fetch timing info">decoded body size</a>.
+</ol>
+
+<p>To <dfn>queue a fetch task</dfn>, given an algorithm <var>algorithm</var>, a
+<a for=/>global object</a> or a <a for=/>parallel queue</a> <var>taskDestination</var>, run these
+steps:
+
+<ol>
+ <li><p>If <var>taskDestination</var> is a <a for=/>parallel queue</a>, then
+ <a lt="enqueue steps" for="parallel queue">enqueue</a> <var>algorithm</var> to
+ <var>taskDestination</var>.
+
+ <li><p>Otherwise, <a>queue a global task</a> on the <a>networking task source</a> with
+ <var>taskDestination</var> and <var>algorithm</var>.
 </ol>
 
 
